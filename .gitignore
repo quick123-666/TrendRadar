@@ -1,0 +1,24 @@
+# ── Python 缓存 ──
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.venv/
+venv/
+
+# ── 本地调试日志 (排查用, 不入库) ──
+*.log
+_*.log
+
+# ── 本地运行产物 ──
+# 注意: output/ 里的 *.db 和 *.html 上游本来就在跟踪 (GH Actions 存数据/产物),
+# 所以这里只挡明显的本地产物, 不整个忽略 output/
+_tmp/
+*.tmp
+.tts_*
+
+# ── 编辑器 / 系统 ──
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

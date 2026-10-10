@@ -157,6 +157,16 @@ rss:
       url: "https://sspai.com/feed"
       max_age_days: 7
 
+    - id: "jiemian"
+      name: "界面新闻"
+      url: "https://a.jiemian.com/index.php?m=article&a=rss"
+      max_age_days: 3
+
+    - id: "tmtpost"
+      name: "钛媒体"
+      url: "https://www.tmtpost.com/feed"
+      max_age_days: 3
+
     # ── 海外科技源 ──
     - id: "hacker-news"
       name: "Hacker News"
@@ -294,7 +304,8 @@ display:
 #    配对项（如 Telegram token 和 chat_id）数量必须一致
 # ===============================================================
 notification:
-  enabled: true                       # 是否启用通知功能（true=启用, false=关闭）—— 总开关
+  enabled: false                      # 是否启用通知功能（true=启用, false=关闭）—— 总开关
+                                      # 用户 2026-10-10 决定：只在本地看 HTML，不推任何外部渠道
                                       # 开启 schedule 后此项仍为总开关：false=永远不推送，true=由调度控制
 
   # 推送渠道配置
