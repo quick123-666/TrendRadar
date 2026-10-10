@@ -127,19 +127,53 @@ rss:
   # - 正整数：覆盖全局设置，只推送此天数内的文章
   # - 0：禁用此频道的新鲜度过滤，推送所有文章
   feeds:
+    # ── 国内综合新闻 (2026-10-10 实测可用) ──
+    # 思路: 海外佛教/藏传站点在 CN-ISP 下全部连不通
+    #       (tibetanreview.net / tibet.net / rfa.org / buddhismnow.com
+    #        / thebuddhistchannel.com / lionsroar.com / tricycle.org 均超时或 403),
+    #       所以改用国内综合新闻 RSS 当数据源, 靠 frequency_words.txt 过滤佛教内容。
+    - id: "people-cn"
+      name: "人民网"
+      url: "http://www.people.com.cn/rss/politics.xml"
+      max_age_days: 3
+
+    - id: "xinhua-politics"
+      name: "新华网-时政"
+      url: "http://www.xinhuanet.com/politics/news_politics.xml"
+      max_age_days: 3
+
+    - id: "chinanews-scroll"
+      name: "中新网-滚动"
+      url: "https://www.chinanews.com.cn/rss/scroll-news.xml"
+      max_age_days: 3
+
+    - id: "solidot"
+      name: "Solidot 奇客的资讯"
+      url: "https://www.solidot.org/index.rss"
+      max_age_days: 3
+
+    - id: "sspai"
+      name: "少数派"
+      url: "https://sspai.com/feed"
+      max_age_days: 7
+
+    # ── 海外科技源 ──
     - id: "hacker-news"
       name: "Hacker News"
       url: "https://hnrss.org/frontpage"
+      max_age_days: 3
 
     - id: "ruanyifeng"
       name: "阮一峰的网络日志"
       url: "http://www.ruanyifeng.com/blog/atom.xml"
-      enabled: false                  # 禁用
-      # max_age_days: 3               # 示例：推送 3 天内的文章（更新较慢的博客）
-     
+      max_age_days: 7
+      # 偶发超时, 重试通常能拿到
+
+    # ── 已确认不可用 ──
     - id: "yahoo-finance"
       name: "雅虎财经"
       url: "https://finance.yahoo.com/news/rssindex"
+      enabled: false                  # 403 Forbidden (2026-10-10 实测)
 
     # 自定义源示例
     # - id: "custom-feed"
