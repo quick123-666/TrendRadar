@@ -35,13 +35,55 @@ on:
     #   "15 * * * *"     → 每小时第15分钟 / minute 15 every hour
     #   "30 0-14 * * *"  → 北京时间 8:00-22:00 每小时第30分钟 / Beijing 8am-10pm
     #
-    - cron: "33 * * * *"
+    # ─────────────────────────────────────────────────────────────────────────────
+    # ⏱️ 当前配置：每 3 天一次 / Current: every 3 days
+    # ─────────────────────────────────────────────────────────────────────────────
+    #
+    # ⚠️ GitHub Actions 的 cron 不支持"每 N 天"语义，只能用「月内日」步进 (*/3)。
+    #    实际触发日：每月 1, 4, 7, 10, 13, 16, 19, 22, 25, 28, 31 号
+    #    局限：月底 31 号 → 次月 1 号只隔 1 天，不是严格的 72 小时。
+    #
+    # 📌 GitHub Actions cron 不支持"every N days"，只能用 day-of-month 步进 (*/3).
+    #    Fires on the 1st, 4th, 7th ... 31st of each month.
+    #    Caveat: the 31st → 1st of next month is only 1 day apart, not a strict 72h.
+    #
+    #   "33 0 */3 * *"  → 每 3 天一次，UTC 00:33 = 北京时间 08:33
+    #
+    #   备选 / Alternatives:
+    #     "33 0 * * 1"     → 每周一一次 / weekly on Monday
+    #     "33 0 1 * *"     → 每月 1 号一次 / monthly on the 1st
+    #     "33 */6 * * *"   → 每 6 小时一次 / every 6 hours
+    #     "33 0,12 * * *"  → 每天两次 / twice a day
+    #
+    # ⚠️ 60 天无活动自动停用：GitHub 会对「连续 60 天没有 push / PR」的仓库
+    #    自动禁用定时工作流。定时运行本身不算仓库活动，所以光靠 cron 续不了命，
+    #    仍需偶尔往仓库推一次 commit。
+    # ⚠️ GitHub auto-disables scheduled workflows after 60 days of repo inactivity;
+    #    scheduled runs don't count as activity, so an occasional commit is required.
+    #
+    - cron: "33 0 */3 * *"
 
   workflow_dispatch:
 
-concurrency:
-  group: crawler-${{ github.ref_name }}
-  cancel-in-progress: true
+# ⚠️ 已移除 concurrency 块 (2026-10-10)
+#
+# 原因: group: crawler-${{ github.ref_name }} + cancel-in-progress: true
+#   会让新 run 启动前先取消同组旧 run。但一旦旧 run 进入 GitHub 无法取消的
+#   僵尸态 (status=queued 但 jobs=0, 取消 API 返回
+#   409 "Cannot cancel a workflow run that has not been queued yet"),
+#   它会一直占着并发组的锁, 导致后续所有 run 卡在 queued 且 jobs 永远为 0。
+#   实测: 该 fork 的 run #1 卡了 8 小时, 加 ref=master 触发的 run #2 同样卡住。
+#
+# 已有的防重入保护: jobs.timeout-minutes: 15, 单次最长 15 分钟,
+#   配合每 3 天一次的 cron, 不会出现堆积。
+#
+# 如需恢复并发控制, 改用不会互锁的分组, 例如:
+#   concurrency:
+#     group: crawler-${{ github.ref_name }}-${{ github.run_number }}   # 每条 run 独立分组
+#     cancel-in-progress: false
+#
+# Removed: concurrency block — it deadlocked behind an uncancellable zombie run.
+# See commit history for the full incident notes.
 
 permissions:
   contents: read
