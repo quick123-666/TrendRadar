@@ -10,6 +10,10 @@ venv/
 *.log
 _*.log
 
+# ── 本地备份 (git bundle / 配置快照) ──
+# 这些是本地灾备, 不该进公开仓库 (bundle 8MB+ 会让仓库迅速膨胀)
+_backup/
+
 # ── 本地运行产物 ──
 # 注意: output/ 里的 *.db 和 *.html 上游本来就在跟踪 (GH Actions 存数据/产物),
 # 所以这里只挡明显的本地产物, 不整个忽略 output/
